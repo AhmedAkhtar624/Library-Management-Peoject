@@ -1,0 +1,576 @@
+import java.util.Scanner;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
+import java.util.InputMismatchException;  
+public class LMS{
+	public static void main(String[] args){
+		Library l = new Library();
+		l.pro();
+		
+	}
+	
+	
+	
+}
+class Book {
+    String title;
+    String author;
+    String genre;
+    String availability;
+
+
+    public Book(String title, String author, String genre, String availability) {
+        this.title = title;
+        this.author = author;
+        this.genre = genre;
+        this.availability = availability;
+    }
+}
+class Member {
+    static Scanner sc = new Scanner(System.in);
+    static Member[] members = new Member[100];
+    static int membernum = 0;
+
+    String name;
+    String id;
+    String borrowedBook;
+
+    public Member(String name, String id, String borrowedBook) {
+        this.name = name;
+        this.id = id;
+        this.borrowedBook = borrowedBook;
+    }
+}
+class Transaction {
+    String bookName;
+    String memberName;
+    String date;
+    String transactionType;
+
+    public Transaction(String bookName, String memberName, String date, String transactionType) {
+        this.bookName = bookName;
+        this.memberName = memberName;
+        this.date = date;
+        this.transactionType = transactionType;
+    }
+}
+
+class Library{
+	
+	static Scanner sc = new Scanner(System.in);
+	static Book[] books = new Book[1000];
+    static int booknum = 1;
+	static Member[] members = new Member[100];
+    static int membernum = 1;
+	static Transaction[] transactions = new Transaction[1000];
+    static int transnum = 0;
+	String choice ;
+	LocalDate d = LocalDate.now();
+	
+	public static String input() {
+        return sc.nextLine();
+    }
+	
+	private static String formatDateToString(LocalDate date) {
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        return date.format(formatter);
+    }
+	
+	
+	
+	static {
+        // Defualt Items
+        books[0] = new Book("DAWN OF SEVEN", "HOMELANDER", "FICTION", "YES");
+        books[1] = new Book("THE RISE OF GEN V", "BUTCHER", "FICTION", "NO");
+		members[0]= new Member("AHMED AKHTAR","M1","N/A");
+		members[1]= new Member("ASAD JAVED","M2","THE RISE OF GEN V");
+		transactions[0] = new Transaction("THE RISE OF GEN V","ASAD JAVED"," DAY OF PROJECT MADE","BORROWED");
+		for (int i = 2; i < books.length; i++) {
+        books[i] = new Book("", "", "", "");
+    }
+		for (int i = 2; i < members.length; i++) {
+        members[i] = new Member("", "", "");
+    }
+		for (int i = 1; i < transactions.length; i++) {
+        transactions[i] = new Transaction("", "", "", "");
+    }
+		
+    }
+	
+	
+	public static void addbook(){
+		System.out.println("ENTER TITLE OF BOOK");
+        String title = sc.nextLine();
+        System.out.println("ENTER AUTHOR NAME");
+        String author = sc.nextLine();
+        System.out.println("ENTER GENRE ");
+        System.out.println("1: FICTION  ");
+        System.out.println("2: NON - FICTION  ");
+        String choice = sc.nextLine();
+        String genre = (choice.equals("1")) ? "FICTION" : "NON - FICTION";
+        String availability = "YES";
+		int already = 0;
+		for(int i = 0; i<= booknum; i++){
+			if(title.equalsIgnoreCase(books[i].title)){
+				already = 1;
+			}
+			
+		}
+		
+		 if(already==1){
+			 System.out.println("BOOK ALREADY EXIST");
+		 }else{
+			Library.books[++booknum] = new Book(title, author, genre, availability);
+			System.out.println("Book added successfully.");
+		 }
+		
+		
+		
+		
+	}
+	
+	
+	
+	public static void removebook() {
+    System.out.println("ENTER TITLE OF BOOK");
+    String title = sc.nextLine();
+    int bookindex = -1;
+
+    for (int i = 0; i < booknum; i++) {
+        if (title.equalsIgnoreCase(books[i].title)) {
+            bookindex = i;
+      
+        }
+    }
+
+    if (bookindex != -1) {
+        for (int i = bookindex; i <= booknum - 1; i++) {
+            books[i] = books[i + 1];
+        }
+        booknum--;
+
+        System.out.println("Book removed successfully.");
+    } else {
+        System.out.println("Book not found.");
+    }
+}
+
+	
+	public static void addmember(){
+		System.out.println("ENTER NAME OF MEMBER");
+        String name = sc.nextLine();
+		int already = 0;
+		for(int i = 0; i<= membernum; i++){
+			if(name.equalsIgnoreCase(members[i].name)){
+				already = 1;
+			}
+			
+		}
+		 if(already==1){
+			 System.out.println("MEMBER  ALREADY EXIST");
+		 }else{
+		members[++membernum] = new Member(name, "M" + (membernum + 1), "N/A");
+        System.out.println("Member added successfully.");
+		 }
+		
+		
+	}
+	public static void removemember(){
+		System.out.println("ENTER ID OF PERSON");
+        String id = sc.nextLine();
+		int memberindex = -1;
+		 for (int i = 0; i <= membernum; i++) {
+            if (id.equalsIgnoreCase(members[i].id)) {
+                memberindex = i;
+            }
+			
+        }
+		if (memberindex != -1) {
+            
+            for (int i = memberindex; i <= membernum - 1; i++) {
+				
+                members[i] = members[i + 1];
+				
+            }
+            membernum--;
+
+            System.out.println("Member removed successfully.");
+        } else {
+            System.out.println("Member not found.");
+        }
+    }
+	
+
+		public static void update() {
+    System.out.println("ENTER TITLE OF BOOK");
+    String title = sc.nextLine();
+
+    int bookIndex = -1;
+	for (int i = 0; i < booknum; i++) {
+        if (title.equalsIgnoreCase(books[i].title)) {
+            bookIndex = i;
+        }
+		
+    }
+
+    if (bookIndex != -1) {
+        System.out.println(books[bookIndex].availability);
+
+        System.out.println("ENTER AVAILABILITY ");
+        System.out.println("1: YES  ");
+        System.out.println("2: NO");
+        String choice = sc.nextLine();
+        String availability;
+
+        if (choice.equals("1")) {
+            availability = "YES";
+        } else if (choice.equals("2")) {
+            availability = "NO";
+        } else {
+            availability = "INVALID ENTRY";
+            System.out.println("INVALID ENTRY");
+            return; 
+        }
+
+        books[bookIndex].availability = availability;
+        System.out.println("Availability updated successfully.");
+    } else {
+        System.out.println("Book not found.");
+    }
+}
+
+		public static void displaymembers() {
+        for (int i = 0; i <= membernum; i++) {
+            System.out.println("MEMBER: " + (i + 1));
+            System.out.println("NAME          : " + members[i].name) ;
+            System.out.println("ID            : " + members[i].id);
+            System.out.println("BORROWED BOOK : " + members[i].borrowedBook);
+            System.out.println();
+        }
+    }
+
+	public static void displaybook(){
+		for (int i = 0; i <= booknum; i++) {
+            System.out.println("BOOK: " + (i + 1));
+            System.out.println("TITLE        : " + books[i].title);
+            System.out.println("AUTHOR       : " + books[i].author);
+            System.out.println("GENRA        : " + books[i].genre);
+			System.out.println("AVAILIBILITY : " + books[i].availability);
+            System.out.println();
+        }
+	}
+	
+	
+
+	public static void dislaylog(){
+		for (int i = 0; i <= transnum; i++) {
+            System.out.println("TRANSACTION: " + (i + 1));
+            System.out.println("BOOK NAME        :" + transactions[i].bookName);
+            System.out.println("MEMBER           : " + transactions[i].memberName);
+            System.out.println("DATE             : " + transactions[i].date);
+			System.out.println("TRANSACTION TYPE : " + transactions[i].transactionType);
+            System.out.println();
+        }
+		
+	}
+	
+	public static void searchbook(){
+		System.out.println("ENTER BOOK NAME ");
+        String bookName = sc.nextLine();
+        int found = 0;
+
+        for (int i = 0; i <= booknum; i++) {
+            if (bookName.equalsIgnoreCase(books[i].title)) {
+                System.out.println("BOOK");
+                System.out.println("Title    :    " + books[i].title);
+                System.out.println("Author   :    " + books[i].author);
+                System.out.println("Genre    :    " + books[i].genre);
+                System.out.println("Available:    " + books[i].availability);
+                System.out.println();
+                found = 1;
+                break;
+            }
+        }
+
+        if (found== 0) {
+            System.out.println("Book not found.");
+        }
+	}
+	
+	public static void searchMember() {
+        System.out.println("ENTER MEMBER ID ");
+        String memberId = sc.nextLine();
+        int found = 0;
+
+        for (int i = 0; i <= membernum; i++) {
+            if (memberId.equalsIgnoreCase(members[i].id)) {
+                System.out.println("MEMBER");
+                System.out.println("NAME          : " + members[i].name);
+                System.out.println("ID            : " + members[i].id);
+                System.out.println("BORROWED BOOK : " + members[i].borrowedBook);
+                System.out.println();
+                found = 1;
+                break;
+            }
+        }
+
+        if (found== 0) {
+            System.out.println("Member not found.");
+        }
+    }
+		
+		
+
+	
+	
+	public static void borrowBook() {
+    try {
+        System.out.println("ENTER BOOK NUMBER");
+        int bookIndex = sc.nextInt();
+        sc.nextLine(); 
+
+        if (bookIndex >= 1 && bookIndex <= booknum && books[bookIndex - 1].availability.equals("YES")) {
+            Book selectedBook = books[bookIndex - 1];
+            System.out.println("BOOK: " + bookIndex);
+            System.out.println("TITLE        : " + selectedBook.title);
+            System.out.println("AUTHOR       : " + selectedBook.author);
+            System.out.println("GENRE        : " + selectedBook.genre);
+            System.out.println("AVAILABILITY : " + selectedBook.availability);
+
+            System.out.println("ENTER YOUR ID NUMBER ");
+            String memberId = sc.nextLine();
+
+            Member borrower = findMemberById(memberId);
+
+            if (borrower != null && borrower.borrowedBook.equalsIgnoreCase("N/A")) {
+                LocalDate currentDate = LocalDate.now();
+                String bookName = selectedBook.title;
+                String memberName = borrower.name;
+                String transactionType = "BORROWED";
+                selectedBook.availability = "NO";
+
+                // Storing in the transaction array
+                transactions[++transnum] = new Transaction(bookName, memberName, formatDateToString(currentDate), transactionType);
+
+                borrower.borrowedBook = bookName;
+
+                System.out.println("YOU HAVE SUCCESSFULLY BORROWED A BOOK");
+            } else {
+                if (borrower == null) {
+                    System.out.println("Invalid member ID.");
+                } else {
+                    System.out.println("Member has already borrowed a book.");
+                }
+            }
+        } else {
+            System.out.println("Invalid book number or book is not available for borrowing.");
+        }
+    } catch (InputMismatchException e) {
+        System.out.println("Invalid input. Please enter a valid integer.");
+        sc.nextLine(); // 
+    }
+}
+
+	
+    public static void returnBook() {
+        System.out.println("ENTER YOUR ID NUMBER ");
+        String memberId = sc.nextLine();
+
+        Member borrower = findMemberById(memberId);
+
+        if (borrower != null) {
+            System.out.println("NAME         : " + borrower.name);
+            System.out.println("ID           : " + borrower.id);
+            System.out.println("BORROWED BOOK : " + borrower.borrowedBook);
+
+            System.out.println("ENTER 1 FOR RETURN OF BOOK");
+            String choice = sc.nextLine();
+
+            if (choice.equals("1")) {
+                if (!borrower.borrowedBook.equalsIgnoreCase("N/A")) {
+                    Book borrowedBook = findBookByName(borrower.borrowedBook);
+
+                    if (borrowedBook != null) {
+                        borrowedBook.availability = "YES";
+                        String bookName = borrowedBook.title;
+                        String memberName = borrower.name;
+                        String transactionType = "RETURNED";
+
+                        // Storing in the transaction array
+                        LocalDate d = LocalDate.now();
+                        transactions[++transnum] = new Transaction(bookName, memberName, formatDateToString(d), transactionType);
+
+                        borrower.borrowedBook = "N/A";
+
+                        System.out.println("YOU HAVE SUCCESSFULLY RETURNED THE BOOK");
+                    } else {
+                        System.out.println("Error: Book not found.");
+                    }
+                } else {
+                    System.out.println("NO BOOK BORROWED BY THIS MEMBER");
+                }
+            } else {
+                System.out.println("Invalid choice.");
+            }
+        } else {
+            System.out.println("Member not found.");
+        }
+    }
+
+   
+
+    private static Member findMemberById(String memberId) {
+        for (int i = 0; i <= membernum; i++) {
+            if (memberId.equalsIgnoreCase(members[i].id)) {
+                return members[i];
+            }
+        }
+        return null; 
+    }
+
+    private static Book findBookByName(String bookName) {
+        for (int i = 0; i <= booknum; i++) {
+            if (bookName.equalsIgnoreCase(books[i].title)) {
+                return books[i];
+            }
+        }
+        return null; 
+    }
+		 public static void design(){
+			  System.out.println("----------------------------------------------------------");
+			 
+		 }
+	
+	
+	public static void pro() {
+        System.out.println("ENTER 1 TO ADD / REMOVE BOOK");
+        System.out.println("ENTER 2 TO ADD / REMOVE MEMBER");
+        System.out.println("ENETR 3 TO BORROW / RETURN BOOKS");
+        System.out.println("ENTER 4 TO INFORMATION ");
+        System.out.println("ENTER 5 TO SEARCH ");
+        System.out.println("ENTER 6 TO TRANSACTION LOG");
+        System.out.println("ENTER 7 TO EXIT LIBRARY");
+
+		String	choice = input();
+
+        switch (choice) {
+            case "1":
+                System.out.println("ENTER 1 TO ADD BOOK");
+                System.out.println("ENTER 2 TO REMOVE BOOK");
+				System.out.println("ENTER 3 TO CHANGE THE AVAILABILITY OF BOOK");
+                String bookChoice = input();
+
+                if (bookChoice.equals("1")) {
+                    addbook();
+                } else if (bookChoice.equals("2")) {
+                    removebook();
+                } else if(bookChoice.equals("3")){
+					update();
+				}else {
+                    System.out.println("INVALID ENTRY");
+                }
+				
+				design();
+				sc.nextLine();
+				design();
+                pro();
+                break;
+
+            case "2":
+                System.out.println("ENTER 1 TO ADD MEMBER");
+                System.out.println("ENTER 2 TO REMOVE MEMBER");
+                String memberChoice = input();
+
+                if (memberChoice.equals("1")) {
+                    addmember();
+                } else if (memberChoice.equals("2")) {
+                    removemember();
+                } else {
+                    System.out.println("INVALID ENTRY");
+                }
+				design();
+				sc.nextLine();
+				design();
+                pro();
+                break;
+
+            case "3":
+                System.out.println("ENTER 1 TO BORROW BOOK");
+                System.out.println("ENTER 2 TO RETURN BOOK");
+                String transactionChoice = input();
+
+                if (transactionChoice.equals("1")) {
+                   borrowBook();
+                } else if (transactionChoice.equals("2")) {
+                    returnBook();
+                } else {
+                    System.out.println("INVALID ENTRY");
+                }
+				design();
+				sc.nextLine();
+				design();
+                pro();
+                break;
+
+            case "4":
+                System.out.println("DO YOU WANT TO SEE THE INFORMATION");
+                System.out.println("ENTER 1 FOR BOOK ");
+                System.out.println("ENTER 2 FOR MEMBER ");
+                String infoChoice = input();
+
+                if (infoChoice.equals("1")) {
+                    displaybook();
+                } else if (infoChoice.equals("2")) {
+                    displaymembers();
+                } else {
+                    System.out.println("INVALID ENTRY");
+                }
+				design();
+				sc.nextLine();
+				design();
+                pro();
+                break;
+
+            case "5":
+                System.out.println("ENTER 1 TO SEARCH BOOK ");
+                System.out.println("ENTER 2 TO SEARCH MEMBER ");
+                String searchChoice = input();
+
+                if (searchChoice.equals("1")) {
+                    searchbook();
+                } else if (searchChoice.equals("2")) {
+                   searchMember();
+                } else {
+                    System.out.println("INVALID ENTRY");
+                }
+				design();
+				sc.nextLine();
+				design();
+                pro();
+                break;
+
+            case "6":
+                dislaylog();
+				design();
+				sc.nextLine();
+				design();
+                pro();
+                break;
+
+            case "7":
+                System.exit(0);
+
+            default:
+                System.out.println("INVALID ENTRY");
+				design();
+				sc.nextLine();
+				design();
+                pro();
+                break;
+        }
+    }
+
+	
+	
+}	
